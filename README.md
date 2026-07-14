@@ -152,6 +152,20 @@ curl -X POST http://localhost:8080/api/bookings \
 curl -X POST http://localhost:8080/api/bookings/<bid>/services/<sid>
 ```
 
+## Pruebas automatizadas
+
+El proyecto incluye una suite de tests de integración sobre los endpoints, escrita con el
+runner nativo de Node (`node:test`) y **supertest**, que cubre casos de éxito y de error de
+cada ruta (200/201/400/404, filtros, inmutabilidad del id, relación por `ObjectId`, `quantity`).
+
+```bash
+pnpm test
+```
+
+Los tests corren contra una base **MongoDB en memoria** (`mongodb-memory-server`), por lo que
+son aislados y reproducibles y **no tocan** la base real de Atlas. La primera ejecución
+descarga el binario de MongoDB para los tests (queda cacheado).
+
 ## Estructura del proyecto
 
 ```
