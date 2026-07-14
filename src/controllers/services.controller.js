@@ -5,26 +5,13 @@ import { responderErrorInterno } from '../utils/responses.util.js';
 // El controller recibe la request, delega la lógica en el service y arma la
 // response. No accede a la persistencia ni contiene reglas de negocio.
 
-// GET /api/services -> todos los servicios, con filtros opcionales por query params
+// GET /api/services -> servicios, con filtros opcionales por query params.
+// El controller solo lee la query y delega el filtrado al service.
 // Ejemplos: /api/services?category=Talleres  |  /api/services?available=true
 export async function getServices(req, res) {
   try {
-    let services = await servicesService.getServices();
     const { category, available } = req.query;
-
-    // Solo se filtra si el query param llega como texto simple (no repetido)
-    if (typeof category === 'string') {
-      services = services.filter(
-        (s) => s.category.toLowerCase() === category.toLowerCase()
-      );
-    }
-
-    // Solo se aplica el filtro si el valor es 'true' o 'false'; otros se ignoran
-    if (available === 'true' || available === 'false') {
-      const disponible = available === 'true';
-      services = services.filter((s) => s.available === disponible);
-    }
-
+    const services = await servicesService.getServices({ category, available });
     res.status(200).json({ status: 'success', payload: services });
   } catch (error) {
     responderErrorInterno(res, error);
